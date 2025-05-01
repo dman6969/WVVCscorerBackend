@@ -57,10 +57,14 @@ app.listen(port, () => {
   console.log(`✅ Backend server is running at http://localhost:${port}`);
 });
 
-// Get all scheduled matches
+// Get all matches (including finalized)
 app.get('/api/matches', async (req, res) => {
-  const matches = await Match.find();
-  res.json(matches);
+  try {
+    const matches = await Match.find(); // Ensure no filter on finalized
+    res.json(matches);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // Add a new match
