@@ -8,7 +8,7 @@ const Match = require('./models/match');
 const app = express();
 const port = 3000;
 
-mongoose.connect('mongodb+srv://dustinprice:%23Volleyball69%21@wvvcscorerbackend.7r6hldq.mongodb.net/ScorerDB?retryWrites=true&w=majority&appName=WVVCscorerBackend')
+mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log('✅ Connected to MongoDB Atlas'))
   .catch((err) => console.error('❌ MongoDB connection error:', err));
 
