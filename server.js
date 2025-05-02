@@ -136,12 +136,18 @@ app.put('/api/matches/:index', async (req, res) => {
     team1.points += match.team1Score;
     team2.points += match.team2Score;
 
-    if (match.team1Score > match.team2Score) {
-      team1.setsWon += 1;
+    // Apply all set-wins sent from frontend
+    const setsWonTeam1 = parseInt(req.body.setsWonTeam1, 10) || 0;
+    const setsWonTeam2 = parseInt(req.body.setsWonTeam2, 10) || 0;
+
+    team1.setsWon += setsWonTeam1;
+    team2.setsWon += setsWonTeam2;
+
+    // One match win counts per match based on sets
+    if (setsWonTeam1 > setsWonTeam2) {
       team1.wins += 1;
       team2.losses += 1;
-    } else if (match.team2Score > match.team1Score) {
-      team2.setsWon += 1;
+    } else if (setsWonTeam2 > setsWonTeam1) {
       team2.wins += 1;
       team1.losses += 1;
     }
