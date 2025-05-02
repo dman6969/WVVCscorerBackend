@@ -138,6 +138,7 @@ app.put('/api/matches/:index', async (req, res) => {
 
     const setsWonTeam1 = req.body.setsWonTeam1 || 0;
     const setsWonTeam2 = req.body.setsWonTeam2 || 0;
+    console.log("📥 RECEIVED SET WINS:", setsWonTeam1, setsWonTeam2);
 
     team1.setsWon += setsWonTeam1;
     team2.setsWon += setsWonTeam2;
