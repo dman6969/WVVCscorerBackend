@@ -5,6 +5,7 @@ const mongoose = require('mongoose');
 const Team = require('./models/team');
 const Match = require('./models/match');
 const bracketRoutes = require('./routes/bracket');
+const archiveRoutes = require('./routes/archive');
 
 const app = express();
 const port = 3000;
@@ -17,6 +18,7 @@ app.use(cors());
 app.use(express.json());
 // auto‑bracket generator routes
 app.use('/api/bracket', bracketRoutes);
+app.use('/api/archive', archiveRoutes);
 
 // Get all teams
 app.get('/api/teams', async (req, res) => {

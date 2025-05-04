@@ -45,6 +45,28 @@ router.post('/:division', async (req, res) => {
     )
   );
 
+  const fs = require('fs');
+  const path = require('path');
+
+  const archivePath = path.join(__dirname, '../data/tournamentArchive.json');
+
+  const archiveEntry = {
+    _id: Date.now().toString(), // simple unique ID
+    name: `${division} Tournament`,
+    division: division,
+    date: new Date().toISOString(),
+    matches: created
+  };
+
+  let archive = [];
+  if (fs.existsSync(archivePath)) {
+    const raw = fs.readFileSync(archivePath, 'utf-8');
+    archive = JSON.parse(raw);
+  }
+
+  archive.push(archiveEntry);
+  fs.writeFileSync(archivePath, JSON.stringify(archive, null, 2));
+
   res.json({ created });
 });
 
