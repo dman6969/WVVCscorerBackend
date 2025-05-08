@@ -95,6 +95,23 @@ app.post('/api/matches', async (req, res) => {
   }
 });
 
+app.post('/api/match-results', async (req, res) => {
+  const { winner, team1, team2, setNumber, team1Score, team2Score } = req.body;
+
+  if (!winner || !team1 || !team2 || !setNumber) {
+    return res.status(400).json({ error: 'Missing required match result data.' });
+  }
+
+  // TEMP: Logging only — you can extend this logic to store in DB later
+  console.log(`Match result received:
+    Set ${setNumber}
+    ${team1} (${team1Score}) vs ${team2} (${team2Score})
+    Winner: ${winner}
+  `);
+
+  res.status(200).json({ message: 'Match result received successfully.' });
+});
+
 // Delete a match by index
 app.delete('/api/matches/:index', async (req, res) => {
   try {
