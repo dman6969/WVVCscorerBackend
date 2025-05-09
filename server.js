@@ -8,7 +8,7 @@ const bracketRoutes = require('./routes/bracket');
 const archiveRoutes = require('./routes/archive');
 
 const app = express();
-const port = 3000;
+const PORT = process.env.PORT || 3000;
 
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log('✅ Connected to MongoDB Atlas'))
@@ -58,8 +58,8 @@ app.delete('/api/teams/:name', async (req, res) => {
   }
 });
 
-app.listen(port, () => {
-  console.log(`✅ Backend server is running at http://localhost:${port}`);
+app.listen(PORT, () => {
+  console.log(`✅ Backend server is running on port ${PORT}`);
 });
 
 // Get all matches (including finalized)
