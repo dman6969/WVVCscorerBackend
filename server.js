@@ -150,7 +150,10 @@ app.put('/api/matches/:index', async (req, res) => {
     const match = await Match.findById(req.params.index);
     if (!match) return res.sendStatus(404);
 
-    if (match.finalized) return res.status(400).send('Match already finalized');
+    // Allow updates for both sets before marking as finalized
+    if (match.finalized && (match.team1Score !== 0 || match.team2Score !== 0)) {
+      return res.status(400).send('Match already finalized');
+    }
 
     const team1 = await Team.findOne({ name: match.team1 });
     const team2 = await Team.findOne({ name: match.team2 });
