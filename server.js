@@ -158,8 +158,8 @@ app.put('/api/matches/:index', async (req, res) => {
     if (!team1 || !team2) return res.status(400).send('Teams not found');
 
     // Update match score
-    match.team1Score = req.body.team1Score;
-    match.team2Score = req.body.team2Score;
+    if (req.body.team1Score != null) match.team1Score = req.body.team1Score;
+    if (req.body.team2Score != null) match.team2Score = req.body.team2Score;
     match.finalized = true;
     await match.save();
 
@@ -171,8 +171,8 @@ app.put('/api/matches/:index', async (req, res) => {
     team1.totalPointsScored += match.team1Score;
     team2.totalPointsScored += match.team2Score;
 
-    const setsWonTeam1 = req.body.setsWonTeam1 || 0;
-    const setsWonTeam2 = req.body.setsWonTeam2 || 0;
+    const setsWonTeam1 = Number(req.body.setsWonTeam1) || 0;
+    const setsWonTeam2 = Number(req.body.setsWonTeam2) || 0;
     console.log("📥 RECEIVED SET WINS:", setsWonTeam1, setsWonTeam2);
 
     team1.setsWon += setsWonTeam1;
