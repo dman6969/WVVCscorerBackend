@@ -196,7 +196,9 @@ app.put('/api/matches/:index', async (req, res) => {
       await team1.save();
       await team2.save();
 
-      match.finalized = true;
+      if (setsWonTeam1 + setsWonTeam2 >= 2 || setsWonTeam1 === 2 || setsWonTeam2 === 2) {
+        match.finalized = true;
+      }
     }
 
     await match.save();
