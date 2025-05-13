@@ -163,39 +163,43 @@ app.put('/api/matches/:index', async (req, res) => {
     // Update match score
     if (req.body.team1Score != null) match.team1Score = req.body.team1Score;
     if (req.body.team2Score != null) match.team2Score = req.body.team2Score;
-    match.finalized = true;
-    await match.save();
 
-    // Update team stats
-    team1.matchesPlayed += 1;
-    team2.matchesPlayed += 1;
+    if (!match.finalized) {
+      // Update team stats
+      team1.matchesPlayed += 1;
+      team2.matchesPlayed += 1;
 
-    // Add cumulative points scored
-    team1.totalPointsScored += match.team1Score;
-    team2.totalPointsScored += match.team2Score;
+      // Add cumulative points scored
+      team1.totalPointsScored += match.team1Score;
+      team2.totalPointsScored += match.team2Score;
 
-    const setsWonTeam1 = Number(req.body.setsWonTeam1) || 0;
-    const setsWonTeam2 = Number(req.body.setsWonTeam2) || 0;
-    console.log("📥 RECEIVED SET WINS:", setsWonTeam1, setsWonTeam2);
+      const setsWonTeam1 = Number(req.body.setsWonTeam1) || 0;
+      const setsWonTeam2 = Number(req.body.setsWonTeam2) || 0;
+      console.log("📥 RECEIVED SET WINS:", setsWonTeam1, setsWonTeam2);
 
-    team1.setsWon += setsWonTeam1;
-    team2.setsWon += setsWonTeam2;
+      team1.setsWon += setsWonTeam1;
+      team2.setsWon += setsWonTeam2;
 
-    // AAU beach scoring: 2 points for win, 1 for loss
-    if (setsWonTeam1 > setsWonTeam2) {
-      team1.points += 2;
-      team2.points += 1;
-      team1.wins += 1;
-      team2.losses += 1;
-    } else if (setsWonTeam2 > setsWonTeam1) {
-      team2.points += 2;
-      team1.points += 1;
-      team2.wins += 1;
-      team1.losses += 1;
+      // AAU beach scoring: 2 points for win, 1 for loss
+      if (setsWonTeam1 > setsWonTeam2) {
+        team1.points += 2;
+        team2.points += 1;
+        team1.wins += 1;
+        team2.losses += 1;
+      } else if (setsWonTeam2 > setsWonTeam1) {
+        team2.points += 2;
+        team1.points += 1;
+        team2.wins += 1;
+        team1.losses += 1;
+      }
+
+      await team1.save();
+      await team2.save();
+
+      match.finalized = true;
     }
 
-    await team1.save();
-    await team2.save();
+    await match.save();
 
     res.json(match);
   } catch (err) {
