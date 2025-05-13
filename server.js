@@ -137,7 +137,7 @@ app.delete('/api/matches/:index', async (req, res) => {
 app.delete('/api/matches', async (req, res) => {
   try {
     await Match.deleteMany({});
-    await Team.updateMany({}, { $set: { matchesPlayed: 0, setsWon: 0, points: 0, wins: 0, losses: 0 } });
+    await Team.updateMany({}, { $set: { matchesPlayed: 0, setsWon: 0, points: 0, wins: 0, losses: 0, totalPointsScored: 0 } });
     res.sendStatus(204);
   } catch (err) {
     res.status(500).json({ error: err.message });
