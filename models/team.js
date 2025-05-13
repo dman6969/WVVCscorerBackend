@@ -1,5 +1,3 @@
-
-
 const mongoose = require('mongoose');
 
 const teamSchema = new mongoose.Schema({
@@ -10,6 +8,7 @@ const teamSchema = new mongoose.Schema({
   points: { type: Number, default: 0 },
   wins: { type: Number, default: 0 },
   losses: { type: Number, default: 0 },
+  totalPointsScored: { type: Number, default: 0 },
 });
 
 const Team = mongoose.model('Team', teamSchema);

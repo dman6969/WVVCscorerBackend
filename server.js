@@ -26,10 +26,10 @@ app.get('/api/teams', async (req, res) => {
   res.json(teams);
 });
 
-// Get team standings sorted by wins and points
+// Get team standings sorted by wins, points, and totalPointsScored
 app.get('/api/standings', async (req, res) => {
   try {
-    const teams = await Team.find().sort({ wins: -1, points: -1 });
+    const teams = await Team.find().sort({ wins: -1, points: -1, totalPointsScored: -1 });
     res.json(teams);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -55,6 +55,17 @@ app.delete('/api/teams/:name', async (req, res) => {
     res.sendStatus(204);
   } catch (err) {
     res.status(500).json({ error: err.message });
+  }
+});
+
+
+// Debug route to check MongoDB connectivity and match count
+app.get('/api/debug-mongo', async (req, res) => {
+  try {
+    const matchCount = await Match.countDocuments();
+    res.json({ status: 'connected', matchCount });
+  } catch (err) {
+    res.status(500).json({ status: 'error', error: err.message });
   }
 });
 
@@ -155,8 +166,10 @@ app.put('/api/matches/:index', async (req, res) => {
     // Update team stats
     team1.matchesPlayed += 1;
     team2.matchesPlayed += 1;
-    team1.points += match.team1Score;
-    team2.points += match.team2Score;
+
+    // Add cumulative points scored
+    team1.totalPointsScored += match.team1Score;
+    team2.totalPointsScored += match.team2Score;
 
     const setsWonTeam1 = req.body.setsWonTeam1 || 0;
     const setsWonTeam2 = req.body.setsWonTeam2 || 0;
@@ -165,10 +178,15 @@ app.put('/api/matches/:index', async (req, res) => {
     team1.setsWon += setsWonTeam1;
     team2.setsWon += setsWonTeam2;
 
+    // AAU beach scoring: 2 points for win, 1 for loss
     if (setsWonTeam1 > setsWonTeam2) {
+      team1.points += 2;
+      team2.points += 1;
       team1.wins += 1;
       team2.losses += 1;
     } else if (setsWonTeam2 > setsWonTeam1) {
+      team2.points += 2;
+      team1.points += 1;
       team2.wins += 1;
       team1.losses += 1;
     }
