@@ -96,7 +96,8 @@ app.post('/api/matches', async (req, res) => {
       ...req.body,
       division: team1Data.division,
       team1Score: 0,
-      team2Score: 0
+      team2Score: 0,
+      matchLabel: req.body.matchLabel || null
     });
 
     await match.save();
