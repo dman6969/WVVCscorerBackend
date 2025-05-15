@@ -165,8 +165,12 @@ app.put('/api/matches/:index', async (req, res) => {
     if (req.body.team1Score != null) match.team1Score = req.body.team1Score;
     if (req.body.team2Score != null) match.team2Score = req.body.team2Score;
 
-    if (!match.finalized) {
-      // Update team stats
+    const setsWonTeam1 = Number(req.body.setsWonTeam1) || 0;
+    const setsWonTeam2 = Number(req.body.setsWonTeam2) || 0;
+    console.log("📥 RECEIVED SET WINS:", setsWonTeam1, setsWonTeam2);
+
+    if (!match.finalized && (setsWonTeam1 === 2 || setsWonTeam2 === 2)) {
+      // Update team stats only once when match is actually over
       team1.matchesPlayed += 1;
       team2.matchesPlayed += 1;
 
@@ -174,14 +178,10 @@ app.put('/api/matches/:index', async (req, res) => {
       team1.totalPointsScored += match.team1Score;
       team2.totalPointsScored += match.team2Score;
 
-      const setsWonTeam1 = Number(req.body.setsWonTeam1) || 0;
-      const setsWonTeam2 = Number(req.body.setsWonTeam2) || 0;
-      console.log("📥 RECEIVED SET WINS:", setsWonTeam1, setsWonTeam2);
-
       team1.setsWon += setsWonTeam1;
       team2.setsWon += setsWonTeam2;
 
-      // AAU beach scoring: 2 points for win, 1 for loss
+      // AAU beach scoring logic: 2 pts for win, 1 for loss
       if (setsWonTeam1 > setsWonTeam2) {
         team1.points += 2;
         team2.points += 1;
@@ -194,12 +194,10 @@ app.put('/api/matches/:index', async (req, res) => {
         team1.losses += 1;
       }
 
+      match.finalized = true;
+
       await team1.save();
       await team2.save();
-
-      if (setsWonTeam1 + setsWonTeam2 >= 2 || setsWonTeam1 === 2 || setsWonTeam2 === 2) {
-        match.finalized = true;
-      }
     }
 
     await match.save();
